@@ -51,11 +51,26 @@ class TextUnderButton @JvmOverloads constructor(
 			padding: Int? = null,
 			label: String? = null,
 			onClickListener: OnClickListener
+		) = create(context, icon, maxHeight, padding, label, onClickListener, null)
+
+		@JvmStatic
+		@Suppress("LongParameterList")
+		fun create(
+			context: Context,
+			@DrawableRes icon: Int,
+			maxHeight: Int? = null,
+			padding: Int? = null,
+			label: String? = null,
+			onClickListener: OnClickListener,
+			onLongClickListener: OnLongClickListener?
 		) = TextUnderButton(context).apply {
 			setLabel(label)
 			setIcon(icon, maxHeight)
 			setPadding(padding)
 			setOnClickListener(onClickListener)
+			if(onLongClickListener != null) {
+				setOnLongClickListener(onLongClickListener)
+			}
 		}
 	}
 }

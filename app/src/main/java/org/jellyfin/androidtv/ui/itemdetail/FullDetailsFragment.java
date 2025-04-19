@@ -762,6 +762,12 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
             public void onClick(View v) {
                 FullDetailsFragmentHelperKt.resumePlayback(FullDetailsFragment.this);
             }
+        }, new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                toggleStateUseExternalPlayer();
+                return true;
+            }
         });
 
         if (BaseItemExtensionsKt.canPlay(baseItem)) {
@@ -774,9 +780,17 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
                 public void onClick(View v) {
                     play(mBaseItem, 0, false);
                 }
+            }, new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    toggleStateUseExternalPlayer();
+                    return true;
+                }
             });
 
             mDetailsOverviewRow.addAction(playButton);
+
+            initStateUseExternalPlayer();
 
             if (resumeButtonVisible) {
                 mResumeButton.requestFocus();
@@ -1208,5 +1222,26 @@ public class FullDetailsFragment extends Fragment implements RecordingIndicatorV
         videoQueueManager.getValue().setCurrentVideoQueue(items);
         Destination destination = KoinJavaComponent.<PlaybackLauncher>get(PlaybackLauncher.class).getPlaybackDestination(items.get(0).getType(), pos);
         navigationRepository.getValue().navigate(destination);
+    }
+
+    /**
+     * 根据是否使用外部播放器设置播放按钮激活状态
+     */
+    private void initStateUseExternalPlayer() {
+        boolean state = userPreferences.getValue().get(UserPreferences.Companion.getUseExternalPlayer());
+        if(mResumeButton != null) {
+            mResumeButton.setActivated(state);
+        }
+        if(playButton != null) {
+            playButton.setActivated(state);
+        }
+    }
+
+    /**
+     * 切换使用外部播放器设置
+     */
+    private void toggleStateUseExternalPlayer() {
+        userPreferences.getValue().set(UserPreferences.Companion.getUseExternalPlayer(), !userPreferences.getValue().get(UserPreferences.Companion.getUseExternalPlayer()));
+        initStateUseExternalPlayer();
     }
 }
